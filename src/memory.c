@@ -22,6 +22,13 @@ _ram_bounds_check(const int32_t addr)
 	}
 }
 
+void
+memory_init(void)
+{
+	memset(_memory.ram, 0, MEMORY_RAM_SIZE);
+	memset(_memory.disk, 0, MEMORY_DISK_SIZE);
+}
+
 int32_t
 ram_get_addr(const int32_t addr)
 {

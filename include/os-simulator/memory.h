@@ -4,6 +4,12 @@
 #include <stdint.h>
 
 /*
+ Initializes memory module
+ */
+void
+memory_init(void);
+
+/*
  How processes get memory from RAM
  */
 int32_t
