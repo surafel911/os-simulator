@@ -9,7 +9,7 @@
 
 struct memory {
 	int32_t ram[MEMORY_RAM_SIZE];
-	int8_t disk[sizeof(int32_t) * MEMORY_DISK_SIZE];
+	int32_t disk[MEMORY_DISK_SIZE];
 };
 
 static struct memory _memory;
@@ -52,7 +52,7 @@ ram_get_buff(void)
 	return _memory.ram;
 }
 
-int8_t*
+int32_t*
 disk_get_buff(void)
 {
 	return _memory.disk;
