@@ -9,7 +9,7 @@
 
 struct memory {
 	int32_t ram[MEMORY_RAM_SIZE];
-	int32_t disk[MEMORY_DISK_SIZE];
+	int8_t disk[sizeof(int32_t) * MEMORY_DISK_SIZE];
 };
 
 static struct memory _memory;
@@ -26,8 +26,8 @@ _ram_bounds_check(const int32_t addr)
 void
 memory_init(void)
 {
-	memset(_memory.ram, 0, MEMORY_RAM_SIZE);
-	memset(_memory.disk, 0, MEMORY_DISK_SIZE);
+	memset(_memory.ram, 0, sizeof(_memory.ram));
+	memset(_memory.disk, 0, sizeof(_memory.disk));
 }
 
 int32_t
@@ -52,7 +52,7 @@ ram_get_buff(void)
 	return _memory.ram;
 }
 
-int32_t*
+int8_t*
 disk_get_buff(void)
 {
 	return _memory.disk;
