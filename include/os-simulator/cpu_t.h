@@ -10,4 +10,4 @@ struct cpu_state {
 	struct registers registers;
 };
 
-#endif // OS_SIMUALTOR_CPU_T_H
+#endif // OS_SIMULATOR_CPU_T_H
