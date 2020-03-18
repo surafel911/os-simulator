@@ -30,7 +30,7 @@ ram_get_buff(void);
 /*
  Pointer to internal disk buffer for streaming data
  */
-int32_t*
+uint8_t*
 disk_get_buff(void);
 
 #endif //OS_SIMULATOR_MEMORY_H
