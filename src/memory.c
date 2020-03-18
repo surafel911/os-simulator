@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MEMORY_RAM_SIZE		1024
 #define MEMORY_DISK_SIZE	2048
