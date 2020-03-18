@@ -21,7 +21,7 @@ prerequisite:
 	$(MKDIR)
 
 debug: prerequisite
-	$(CC) -g -Werror $(MACROS) $(CFLAGS) $(INCLUDES) $(SOURCES) $(TESTS) -o $(BINARY)
+	$(CC) -g $(MACROS) $(CFLAGS) $(INCLUDES) $(SOURCES) $(TESTS) -o $(BINARY)
 
 release: prerequisite
-	$(CC) -O3 $(MACROS) $(CFLAGS) $(INCLUDES) $(SOURCES) $(TESTS) -o $(BINARY)
+	$(CC) -O3 -Werror $(MACROS) $(CFLAGS) $(INCLUDES) $(SOURCES) $(TESTS) -o $(BINARY)
