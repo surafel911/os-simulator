@@ -7,7 +7,7 @@
 
 struct cpu_state {
 	uint16_t program_counter;
-	struct registers cpu_registers;
+	struct registers registers;
 };
 
 #endif // OS_SIMULATOR_CPU_T_H
