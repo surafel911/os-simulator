@@ -13,6 +13,7 @@ driver_error(const char* format, ...)
 
 	fprintf(stderr, "ERROR: ");
 	vfprintf(stderr, format, args);
+	fprintf(stderr, "\n\n");
 
 	va_end(args);
 
