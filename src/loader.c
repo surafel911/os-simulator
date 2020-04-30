@@ -7,14 +7,16 @@
 #include <stdbool.h>
 
 #include <os-simulator/dma.h>
-#include <os-simulator/job.h>
 #include <os-simulator/memory.h>
 
 #define LOADER_INPUT_BUFF_SIZE	20
 
+struct jcc {
+	uint32_t id, size, priority;
+};
 struct job {
 	uint32_t* buffer;
-	struct job_control_card jcc;
+	struct jcc jcc;
 };
 
 struct job_list {
@@ -50,7 +52,7 @@ _loader_job_list_free(struct job_list* job_list)
 }
 
 static void
-_loader_read_job_control_card(FILE* file, struct job_control_card* jcc)
+_loader_read_jcc(FILE* file, struct jcc* jcc)
 {
 	fscanf(file, "// JOB %X %X %X\n",
 			&jcc->id, &jcc->size, &jcc->priority);
@@ -88,7 +90,7 @@ _loader_read_job(FILE* file, struct job* job)
 
 	_loader_job_init(job);
 
-	_loader_read_job_control_card(file, &job->jcc);
+	_loader_read_jcc(file, &job->jcc);
 	_loader_read_job_instructions(file, job);
 
 	fgets(tmp, sizeof(tmp), file);
@@ -124,7 +126,7 @@ _loader_read_jobs(FILE* file, struct job_list* job_list)
 }
 
 static void
-_loader_load_jobs_to_disk(struct job_list* job_list)
+_loader_write_jobs_to_disk(struct job_list* job_list)
 {
 	struct job* job;
 
@@ -151,14 +153,14 @@ _loader_load_jobs_to_disk(struct job_list* job_list)
 }
 
 void
-loader_load_program_file(FILE* file)
+loader_load_jobs_file(FILE* file)
 {
 	struct job_list job_list;
 	
 	_loader_job_list_init(&job_list);
 
 	_loader_read_jobs(file, &job_list);
-	_loader_load_jobs_to_disk(&job_list);
+	_loader_write_jobs_to_disk(&job_list);
 
 	_loader_job_list_free(&job_list);
 }
