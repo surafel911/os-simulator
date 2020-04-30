@@ -33,3 +33,30 @@ dma_write(enum dma_channel channel, uint16_t addr,
 		}
 	}
 }
+
+void
+dma_transfer(enum dma_channel dest, enum dma_channel src,
+	uint16_t dest_addr, uint16_t src_addr, size_t words)
+{
+	if (dest == DMA_RAM_CHANNEL) {
+		if (dest == DMA_RAM_CHANNEL) {
+			for (int i = 0; i < words; i++) {
+				memory_ram_set(src_addr + i, memory_ram_get(dest_addr + i));
+			}
+		} else {
+			for (int i = 0; i < words; i++) {
+				memory_ram_set(src_addr + i, memory_disk_get(dest_addr + i));
+			}
+		}
+	} else {
+		if (dest == DMA_RAM_CHANNEL) {
+			for (int i = 0; i < words; i++) {
+				memory_disk_set(src_addr + i, memory_ram_get(dest_addr + i));
+			}
+		} else {
+			for (int i = 0; i < words; i++) {
+				memory_disk_set(src_addr + i, memory_disk_get(dest_addr + i));
+			}
+		}
+	}
+}
