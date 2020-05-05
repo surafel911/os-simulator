@@ -1,4 +1,4 @@
-#include <os-simulator/memory.h>
+#include <os-simulator/storage.h>
 
 #include <stdint.h>
 
@@ -10,7 +10,7 @@
 static uint32_t _ram[MEMORY_RAM_SIZE], _disk[MEMORY_DISK_SIZE];
 
 uint32_t
-memory_ram_get(uint16_t addr)
+storage_ram_get(uint16_t addr)
 {
 	if (addr > MEMORY_RAM_SIZE) {
 		driver_error("RAM out of bounds access.");
@@ -20,7 +20,7 @@ memory_ram_get(uint16_t addr)
 }
 
 void
-memory_ram_set(uint16_t addr, uint32_t word)
+storage_ram_set(uint16_t addr, uint32_t word)
 {
 	if (addr > MEMORY_RAM_SIZE) {
 		driver_error("RAM out of bounds access.");
@@ -30,7 +30,7 @@ memory_ram_set(uint16_t addr, uint32_t word)
 }
 
 uint32_t
-memory_disk_get(uint16_t addr)
+storage_disk_get(uint16_t addr)
 {
 	if (addr > MEMORY_DISK_SIZE) {
 		driver_error("DISK out of bounds access.");
@@ -40,7 +40,7 @@ memory_disk_get(uint16_t addr)
 }
 
 void
-memory_disk_set(uint16_t addr, uint32_t word)
+storage_disk_set(uint16_t addr, uint32_t word)
 {
 	if (addr > MEMORY_DISK_SIZE) {
 		driver_error("DISK out of bounds access.");
