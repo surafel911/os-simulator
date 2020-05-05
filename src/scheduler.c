@@ -6,6 +6,7 @@
 
 #include <os-simulator/dma.h>
 #include <os-simulator/pcb.h>
+#include <os-simulator/driver_i.h>
 #include <os-simulator/storage.h>
 
 #define SCHEDULER_FRAME_SIZE			48
@@ -107,8 +108,14 @@ void
 scheduler_load_jobs(void)
 {
 	struct scheduler scheduler;
-
+	
 	_scheduler_read_scheduler(&scheduler);
+
+	if (scheduler.job_index == storage_disk_get(0) && 
+		scheduler.loaded_jobs == 0) {
+		driver_signal_exit();
+		return();
+	}
 
 	for (int i = scheduler.loaded_jobs;
 		i < ARRAY_SIZE(scheduler.ready_pcbs); i++) {
