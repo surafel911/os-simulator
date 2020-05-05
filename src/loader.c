@@ -1,13 +1,12 @@
 #include <os-simulator/loader.h>
 
-#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
 #include <os-simulator/dma.h>
-#include <os-simulator/memory.h>
+#include <os-simulator/storage.h>
 
 #define LOADER_INPUT_BUFF_SIZE	20
 
@@ -55,7 +54,7 @@ static void
 _loader_read_jcc(FILE* file, struct jcc* jcc)
 {
 	fscanf(file, "// JOB %X %X %X\n",
-			&jcc->id, &jcc->size, &jcc->priority);
+		&jcc->id, &jcc->size, &jcc->priority);
 }
 
 static void
@@ -74,7 +73,7 @@ _loader_read_job_data(FILE* file, struct job* job)
 	uint32_t* data;
 
 	job->buffer = realloc(job->buffer, sizeof(*job->buffer) * 
-			(job->jcc.size + LOADER_INPUT_BUFF_SIZE));
+		(job->jcc.size + LOADER_INPUT_BUFF_SIZE));
 
 	data = job->buffer + job->jcc.size;
 
@@ -132,18 +131,18 @@ _loader_write_jobs_to_disk(struct job_list* job_list)
 
 	int i, disk_addr;
 
-	memory_disk_set(0, job_list->job_count);
+	storage_disk_set(0, job_list->job_count);
 
 	disk_addr = job_list->job_count + 1;
 
 	for (i = 0; i < job_list->job_count; i++) {
 		job = job_list->jobs + i;
 
-		memory_disk_set(i + 1, disk_addr);
+		storage_disk_set(i + 1, disk_addr);
 
-		memory_disk_set(disk_addr++, job->jcc.id);
-		memory_disk_set(disk_addr++, job->jcc.size);
-		memory_disk_set(disk_addr++, job->jcc.priority);
+		storage_disk_set(disk_addr++, job->jcc.id);
+		storage_disk_set(disk_addr++, job->jcc.size);
+		storage_disk_set(disk_addr++, job->jcc.priority);
 
 		dma_write(DMA_DISK_CHANNEL, disk_addr, job->buffer,
 			job->jcc.size + LOADER_INPUT_BUFF_SIZE);
@@ -153,7 +152,7 @@ _loader_write_jobs_to_disk(struct job_list* job_list)
 }
 
 void
-loader_load_jobs_file(FILE* file)
+loader_load_jobs_to_disk(FILE* file)
 {
 	struct job_list job_list;
 	
