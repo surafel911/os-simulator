@@ -41,28 +41,28 @@ driver_start(int argc, char* argv[])
 }
 
 void
-driver_cycle(void)
+driver_run(void)
 {
 	static struct pcb pcb;
 
-	scheduler_load_jobs();
+	while (true) {
+		scheduler_load_jobs();
+	
+		if (!_running) {
+			return;
+		}
 
-	if (cpu_pcb_get().jcc.id == 0) {
-		scheduler_schedule_job();
+		if (cpu_pcb_get().jcc.priority == 0) {
+			scheduler_schedule_job();
 
-		dispatcher_assign_job();
+			dispatcher_assign_job();
+		}
+
+		cpu_execute();
+
+		pcb = cpu_pcb_get();
+		scheduler_running_pcb_set(pcb);
 	}
-
-	cpu_execute();
-
-	pcb = cpu_pcb_get();
-	scheduler_running_pcb_set(pcb);
-}
-
-bool
-driver_running(void)
-{
-	return _running;
 }
 
 void

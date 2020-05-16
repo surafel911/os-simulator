@@ -10,10 +10,7 @@ void
 driver_start(int argc, char* argv[]);
 
 void
-driver_cycle(void);
-
-bool
-driver_running(void);
+driver_run(void);
 
 void
 driver_error(const char* format, ...);
