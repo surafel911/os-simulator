@@ -16,6 +16,11 @@
 
 #define ARRAY_SIZE(x)					(sizeof(x) / sizeof(*x))
 
+/*
+ * TODO: Figure out why scheduler signals driver exit when there are still
+ * jobs available
+ */
+
 struct scheduler {
 	uint16_t job_index, loaded_jobs;
 	struct pcb running_pcb, ready_pcbs[3];
@@ -57,6 +62,12 @@ _scheduler_running_pcb_input_buff_set(struct pcb* running_pcb)
 		SCHEDULER_INPUT_BUFFER_SIZE);
 }
 
+static bool
+_scheduler_running_pcb_finished(struct pcb* running_pcb)
+{
+	return (running_pcb->jcc.id != 0 && running_pcb->jcc.priority == 0);
+}
+
 static void
 _scheduler_load_job(struct scheduler* scheduler, struct pcb* pcb)
 {
@@ -70,10 +81,14 @@ _scheduler_load_job(struct scheduler* scheduler, struct pcb* pcb)
 	pcb->jcc.size = storage_disk_get(disk_addr++);
 	pcb->jcc.priority = storage_disk_get(disk_addr++);
 
-	pcb->base_addr = ((sizeof(*scheduler) / sizeof(uint32_t)) +
-		SCHEDULER_INPUT_BUFFER_SIZE + SCHEDULER_TEMP_BUFFER_SIZE +
-		SCHEDULER_OUTPUT_BUFFER_SIZE + 1) + (SCHEDULER_FRAME_SIZE * 
-		scheduler->job_index++);
+	if (_scheduler_running_pcb_finished(&scheduler->running_pcb)) {
+		pcb->base_addr = scheduler->running_pcb.base_addr;
+	} else {
+		pcb->base_addr = ((sizeof(*scheduler) / sizeof(uint32_t)) +
+			SCHEDULER_INPUT_BUFFER_SIZE + SCHEDULER_TEMP_BUFFER_SIZE +
+			SCHEDULER_OUTPUT_BUFFER_SIZE + 1) + (SCHEDULER_FRAME_SIZE * 
+			scheduler->job_index);
+	}
 
 	dma_transfer(DMA_RAM_CHANNEL, DMA_DISK_CHANNEL, pcb->base_addr,
 		disk_addr, pcb->jcc.size);
@@ -90,7 +105,8 @@ _scheduler_load_job(struct scheduler* scheduler, struct pcb* pcb)
 		SCHEDULER_INPUT_BUFFER_SIZE + 1;
 	pcb->cpu_state.output_buffer_addr = pcb->cpu_state.temp_buffer_addr +
 		SCHEDULER_TEMP_BUFFER_SIZE + 1;
-
+	
+	scheduler->job_index++;
 	scheduler->loaded_jobs++;
 }
 
@@ -114,7 +130,7 @@ scheduler_load_jobs(void)
 	if (scheduler.job_index == storage_disk_get(0) && 
 		scheduler.loaded_jobs == 0) {
 		driver_signal_exit();
-		return();
+		return;
 	}
 
 	for (int i = scheduler.loaded_jobs;
