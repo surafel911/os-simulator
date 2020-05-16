@@ -24,7 +24,7 @@ register_get(enum register_id id, uint32_t registers[REGISTER_SIZE])
 		case REGISTER_ACC:
 			val = registers[0];
 			break;
-		case REGISTER_REG1 ... REGISTER_REG14:
+		case REGISTER_REG2 ... REGISTER_REG15:
 			val = registers[(int)id - 1];
 			break;
 	}
@@ -41,7 +41,7 @@ register_set(enum register_id id, uint32_t registers[REGISTER_SIZE], uint32_t wo
 		case REGISTER_ACC:
 			registers[0] = word;
 			break;
-		case REGISTER_REG1 ... REGISTER_REG14:
+		case REGISTER_REG2 ... REGISTER_REG15:
 			registers[(int)id - 1] = word;
 			break;
 	}
